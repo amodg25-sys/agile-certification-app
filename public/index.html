@@ -148,8 +148,8 @@ const TOTAL = ALL_MODULES.length;
 // STATE
 // ═══════════════════════════════════════════════
 let state = {
-  apiKey: BAKED_KEY || '',
-  apiKeySet: !!BAKED_KEY,
+  apiKey: '',
+  apiKeySet: true,
   tab: 'progress',
   status: {},
   log: [],
@@ -207,13 +207,13 @@ function mdToHtml(text){
 }
 
 async function callClaude(prompt,maxTokens=4000){
-  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+  const resp=await fetch('/api/chat',{
     method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':state.apiKey,'anthropic-version':'2023-06-01'},
-    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens,messages:[{role:'user',content:prompt}]})
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({messages:[{role:'user',content:prompt}],max_tokens:maxTokens})
   });
   const data=await resp.json();
-  if(data.error)throw new Error(data.error.message);
+  if(data.error)throw new Error(data.error.message||JSON.stringify(data.error));
   return data.content[0].text;
 }
 
