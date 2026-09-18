@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGILE Fitness Coach Certification — Amod Ghanekar</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#0F172A;color:#F1F5F9;font-family:Inter,system-ui,sans-serif;min-height:100vh;font-size:14px}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit;outline:none}
+textarea{resize:vertical}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#1E293B}
+::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:#475569;font-size:12px;font-weight:600;padding:8px 6px;cursor:pointer;transition:all 0.2s;flex:1}
+.tab-btn.active{border-bottom-color:#6366F1;color:#6366F1;font-weight:800}
+.inp{background:#0F172A;border:1px solid #334155;border-radius:8px;padding:9px 12px;color:#F1F5F9;font-size:13px;width:100%}
+.inp:focus{border-color:#6366F1}
+.btn-primary{background:#6366F1;color:#fff;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;width:100%}
+.btn-primary:hover{background:#4f46e5}
+.btn-green{background:#10B981;color:#fff;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;width:100%}
+.btn-secondary{background:#263447;color:#94A3B8;border:1px solid #334155;border-radius:9px;padding:12px;font-size:13px;font-weight:700;cursor:pointer}
+.card{background:#1E293B;border-radius:12px;padding:20px;margin-bottom:16px}
+.module-card{background:#1E293B;border-radius:10px;margin-bottom:6px;overflow:hidden;border:1px solid #334155;transition:border-color 0.2s}
+.module-card.active{border-color:#F59E0B}
+.module-card.done{border-color:#10B981}
+.label{font-size:10px;color:#64748B;margin-bottom:5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.lesson-content{line-height:1.75;font-size:13px;color:#CBD5E1}
+.lesson-content h1{color:#6366F1;font-size:20px;font-weight:900;margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid #334155}
+.lesson-content h2{color:#F1F5F9;font-size:16px;font-weight:800;margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid #1E3A5F}
+.lesson-content h3{color:#6366F1;font-size:13px;font-weight:700;margin:18px 0 8px;letter-spacing:0.5px;text-transform:uppercase}
+.lesson-content strong{color:#E2E8F0}
+.lesson-content em{color:#CBD5E1}
+.lesson-content code{background:#0F172A;color:#7DD3FC;padding:2px 6px;border-radius:4px;font-size:12px}
+.lesson-content ul,.lesson-content ol{margin:8px 0 8px 20px}
+.lesson-content li{margin-bottom:4px}
+.lesson-content p{margin-bottom:10px}
+.mcq-option{padding:9px 13px;border-radius:7px;margin-bottom:5px;border:1px solid #334155;background:#0F172A;cursor:pointer;font-size:12px;color:#94A3B8;transition:all 0.15s;display:block;width:100%;text-align:left}
+.mcq-option:hover{border-color:#4f46e5;color:#a5b4fc}
+.mcq-option.selected{border-color:#6366F1;background:#1e1b4b;color:#a5b4fc}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// ═══════════════════════════════════════════════════════
+// API KEY — injected from Vercel env at build, or entered
+// ═══════════════════════════════════════════════════════
+const BAKED_KEY = typeof __ANTHROPIC_KEY__ !== 'undefined' ? __ANTHROPIC_KEY__ : '';
+
+// ═══════════════════════════════════════════════
+// CURRICULUM — 18 MODULES, 6 BLOCKS
+// ═══════════════════════════════════════════════
+const CURRICULUM = [
+  {id:"A",name:"The Human Body",color:"#6366F1",modules:[
+    {id:1,name:"Musculoskeletal Anatomy & Exercise Application",sessions:8,
+     topics:["Bone structure & joint types","Muscle tissue types & functions","Fascia & connective tissue — slings & chains","Major muscles in exercise — origin, insertion, action","Joint mobility vs stability (joint-by-joint model)","Ayurvedic body typing & anatomical parallels"],
+     syllabus:`Module 1: Musculoskeletal Anatomy & Exercise Application (Block A: The Human Body)
+TOPICS: Bone structure (cortical vs cancellous, synovial joint types: hinge, ball-and-socket, pivot, gliding, saddle, condyloid); Muscle tissue types (skeletal/cardiac/smooth, motor unit recruitment, pennate/parallel/fusiform architecture); Fascia & connective tissue (superficial vs deep fascia, Anatomy Trains — Tom Myers, tensegrity model); Major muscles in exercise (glutes max/med/min, hamstrings, quads, adductors, hip flexors, erector spinae, lats, traps upper/mid/lower, rhomboids, pectorals, deltoids, rotator cuff SITS, biceps, triceps, core: RA/TA/obliques/multifidus — origin, insertion, action for each); Joint-by-joint model (Gray Cook: ankle mobility, knee stability, hip mobility, lumbar stability, thoracic mobility, glenohumeral mobility, scapular stability); Ayurvedic parallels (Vata/Pitta/Kapha body types and musculoskeletal tendencies, mamsa dhatu/asthi dhatu, marma points in exercise context). INDIAN CONTEXT: Higher knee valgus tendency in Indian populations, lower limb alignment patterns in urban Pune clients.`},
+    {id:2,name:"Exercise Physiology",sessions:10,
+     topics:["Three energy systems — ATP-PCr, Glycolytic, Oxidative","Type 1 vs Type 2 muscle fibres","EPOC & recovery science","VO2 and oxygen kinetics","Cardiovascular & respiratory response to exercise","Endocrine system & exercise hormones","Training adaptations — neural and structural"],
+     syllabus:`Module 2: Exercise Physiology (Block A: The Human Body)
+TOPICS: Three energy systems (ATP-PCr: 0-10s, creatine phosphate, anaerobic; Glycolytic: 10s-2min, fast/slow glycolysis, lactate threshold; Oxidative: 2min+, aerobic, fat/carb oxidation, Krebs cycle, electron transport chain; crossover points, sport relevance); Muscle fibre types (Type I slow-twitch fatigue-resistant aerobic, Type IIa intermediate trainable, Type IIx fast-twitch powerful; distribution, trainability, programme implications); EPOC (excess post-exercise oxygen consumption, HIIT vs steady-state magnitude, fat oxidation post-exercise, fat loss programming implications); VO2 max and oxygen kinetics (definition, significance, lactate threshold vs ventilatory threshold, oxygen debt); Cardiovascular & respiratory response (acute: HR, SV, CO, BP, breathing rate; cardiac output = HR × SV; vasodilation; blood flow redistribution); Endocrine system (cortisol catabolic/stress, testosterone anabolic, GH lipolysis/protein synthesis, insulin glucose uptake, IGF-1, epinephrine/norepinephrine acute response, leptin/ghrelin appetite); Training adaptations (neural: faster recruitment, motor patterns, reduced inhibition; structural: hypertrophy, capillary density, mitochondrial biogenesis, bone density; timeline). INDIAN CONTEXT: Urban Indian desk-worker metabolic profile, high sedentary load.`},
+    {id:3,name:"Neuroscience of Movement & Biomechanics",sessions:8,
+     topics:["Proprioception & sensory receptors","Motor control & motor learning stages","Planes of motion","Kinetic chain — open vs closed","Force, levers & moment arms","Reciprocal inhibition","Stretch-shortening cycle","Pain science basics"],
+     syllabus:`Module 3: Neuroscience of Movement & Biomechanics (Block A: The Human Body)
+TOPICS: Proprioception & sensory receptors (muscle spindle — length sensor/stretch reflex; GTO — tension sensor/autogenic inhibition; joint mechanoreceptors; skin receptors; proprioception vs interoception; training proprioception); Motor control & motor learning (Fitts & Posner stages: cognitive → associative → autonomous; CNS vs PNS roles; motor cortex, cerebellum, basal ganglia; feed-forward vs feedback control; implications for coaching cues); Planes of motion (sagittal: flexion/extension; frontal: abduction/adduction/lateral flexion; transverse: rotation/pronation/supination; multi-planar training rationale); Kinetic chain (open: distal segment free e.g. leg press; closed: distal segment fixed e.g. squat; proximal stability for distal mobility; kinetic chain dysfunction); Force, levers & moment arms (3 lever classes with body examples; mechanical advantage; moment arm length and injury risk; force-velocity curve; force-length relationship); Reciprocal inhibition (Sherrington's law; agonist contracts → antagonist inhibits; chronic inhibition patterns; corrective application); Stretch-shortening cycle (eccentric loading, amortisation, concentric release; elastic energy storage; plyometric training; pre-activation); Pain science (gate control theory; central sensitisation; pain ≠ damage; biopsychosocial model; training clients with chronic pain).`}
+  ]},
+  {id:"B",name:"Movement",color:"#0EA5E9",modules:[
+    {id:4,name:"Functional Training Philosophy & Principles",sessions:5,
+     topics:["Definition & origins of functional training","Functional vs traditional training","Performance pyramid (Gray Cook)","Core principles of FT","Transfer of training","Compensation & dysfunction"],
+     syllabus:`Module 4: Functional Training Philosophy & Principles (Block B: Movement)
+TOPICS: Definition & origins (Gray Cook, Paul Chek, NASM roots; from rehab to performance; movement as skill; FT = training that prepares the body for real-life demands); Functional vs traditional (isolation vs integration; machine-based vs free/bodyweight; stability challenge; proprioceptive demand; motor pattern carry-over); Performance pyramid — Gray Cook (movement: FMS screen as base; performance: conditioning layer; skill: sport/activity specific top; cost of skipping the base); Core principles of FT (multi-planar movement, tri-planar loading, proprioceptive challenge, ground-based when appropriate, movement patterns over muscles, reactive training); Transfer of training (specificity principle; neuromuscular transfer; designing for carry-over to daily life or sport); Compensation & dysfunction (how the body compensates around pain/weakness; dominant patterns; compensation detection; why correcting movement matters before loading). CNES CONNECTION: This module formalises Amod's CNES Functional Training Specialist workshop knowledge.`},
+    {id:5,name:"The 6 Fundamental Movement Patterns",sessions:8,
+     topics:["Squat — mechanics, cues, regression/progression","Hinge pattern","Lunge pattern","Push pattern","Pull pattern","Rotate & carry pattern","Unilateral training principles"],
+     syllabus:`Module 5: The 6 Fundamental Movement Patterns (Block B: Movement)
+TOPICS: Squat (ankle dorsiflexion requirement, knee tracking, hip hinge initiation, spine neutral; regressions: box squat, goblet squat, TRX assisted; progressions: front squat, pistol squat, barbell; common faults and cues); Hinge (hip hinge vs squat distinction; posterior chain loading; RDL, conventional deadlift, single-leg RDL; kettlebell swing as dynamic hinge; coaching the hip hinge with dowel drill); Lunge (forward, reverse, lateral, curtsy; split squat vs lunge; step length and shin angle; single-leg stability demands; progressions to Bulgarian split squat, deficit lunge); Push (horizontal: push-up, DB press, cable press; vertical: overhead press, pike push-up; shoulder packing; scapular control; regressions for shoulder issues; Indian shoulder impingement prevalence); Pull (horizontal rows: seated, cable, TRX, DB; vertical: lat pulldown, chin-up, pull-up; scapular retraction and depression; grip variations; progressive loading without bar access for home clients); Rotate & carry (rotation most undertrained; chop and lift — PNF diagonals; anti-rotation: Pallof press; farmer carry, suitcase carry, waiter carry; gait and daily life carry patterns); Unilateral principles (left-right asymmetry correction; unilateral loading for core stability; higher proprioceptive demand; bilateral-to-unilateral progression sequencing).`},
+    {id:6,name:"Movement Assessment",sessions:8,
+     topics:["Why assess before training","FMS — 7 patterns, scoring, interpretation","Static postural assessment","Overhead squat assessment (OHSA)","Single-leg squat test","Gait analysis basics","Reassessment protocols"],
+     syllabus:`Module 6: Movement Assessment (Block B: Movement)
+TOPICS: Why assess (risk management; baseline for progress; compensation identification; corrective exercise direction; legal/professional protection; AGILE intake integration); FMS — Functional Movement Screen (7 tests: deep squat, hurdle step, inline lunge, shoulder mobility, active straight-leg raise, trunk stability push-up, rotary stability; scoring 0-3; asymmetry rule; red flags — pain = 0; clearing tests; composite score interpretation); Static postural assessment (anterior, lateral, posterior views; plumb line; patterns: forward head, kyphosis, lordosis, anterior/posterior pelvic tilt, knee valgus/varus, pronation/supination; photographic documentation); OHSA — Overhead Squat Assessment (multi-joint screen; feet shoulder width arms overhead; checkpoints: ankles, knees, hips, lumbar, thoracic, shoulder; compensation patterns and implied imbalances); Single-leg squat test (knee valgus, trunk lean, hip drop/Trendelenburg; gluteal insufficiency; administration protocol); Gait analysis basics (stance vs swing phases; heel strike, midstance, toe-off; dysfunctions: overpronation, reduced hip extension, lateral trunk sway); Reassessment protocols (FMS every 4-6 weeks during corrective phase; postural photography; client-facing progress reporting; when to refer). AGILE: Map findings to client intake; create client-specific corrective priorities.`},
+    {id:7,name:"Core, Stability, Balance & Mobility",sessions:7,
+     topics:["Core functions — anti-extension, anti-rotation, anti-flexion","McGill Big 3","Core progression continuum","Balance & proprioceptive training","Mobility vs flexibility","FRC & CARs (Andreo Spina)","Foam rolling & SMR"],
+     syllabus:`Module 7: Core, Stability, Balance & Mobility (Block B: Movement)
+TOPICS: Core functions (core as canister: diaphragm top, pelvic floor bottom, TA and multifidus sides; intra-abdominal pressure; anti-extension: plank; anti-rotation: Pallof press; anti-lateral flexion: suitcase carry; hip flexion under load: dead bug; proximal stability for distal mobility); McGill Big 3 (bird dog, curl-up, side plank; Stuart McGill evidence base; spinal hygiene; prescription and progression; why crunches are contraindicated for disc pathology); Core progression continuum (activation: TVA/diaphragmatic breathing → stability: static holds → strength: loaded carries → power: rotational/medicine ball); Balance & proprioceptive training (perturbation training; single-leg stance progressions; unstable surface: BOSU, airex; reactive balance; vestibular system; elderly client relevance); Mobility vs flexibility (mobility = active usable range; flexibility = passive range; why flexibility without stability is risky; mobility as daily skill); FRC & CARs — Andreo Spina (Functional Range Conditioning; Controlled Articular Rotations; PAILs and RAILs; joint health and active ROM expansion; daily joint routine prescription); Foam rolling & SMR (self-myofascial release; mechanism: fascia and GTO; pre vs post-workout application; pressure, duration, targeting; limitations of SMR research).`},
+    {id:8,name:"Corrective Exercise & Injury Prevention",sessions:7,
+     topics:["Upper crossed syndrome","Lower crossed syndrome","Joint-by-joint model application","Inhibit-Lengthen-Activate-Integrate sequence","Common injury patterns & corrections","When to refer out","Safe return to training principles"],
+     syllabus:`Module 8: Corrective Exercise & Injury Prevention (Block B: Movement)
+TOPICS: Upper crossed syndrome (tight: upper traps, levator scapulae, pectorals; weak/inhibited: deep cervical flexors, mid/lower traps, serratus anterior; forward head posture, rounded shoulders; corrective sequence); Lower crossed syndrome (tight: hip flexors, thoracolumbar extensors; weak: glutes, deep abdominals; anterior pelvic tilt, hyperlordosis; corrective sequence; relevance to Indian desk-worker clients); Joint-by-joint model application (dysfunction moves up and down chain; e.g. stiff ankle → knee valgus → hip dysfunction → low back pain; treating source not symptom); ILAI sequence (Inhibit: SMR/foam roll overactive; Lengthen: static/active stretch the tight; Activate: isolation work for underactive; Integrate: compound movement with new pattern; clinical application); Common injury patterns (rotator cuff impingement: protocol; IT band syndrome: protocol; patellofemoral pain: protocol; low back pain: protocol; plantar fasciitis: protocol — mechanism, assessment sign, corrective for each); When to refer (red flags: fracture, nerve compromise, vascular signs, unexplained pain, post-surgical; scope of practice; professional referral communication; building clinical network for ARISE/AGILE model); Safe return to training (pain-free rule; load management; RPE-based progression post-injury; gradual exposure; compensation monitoring).`}
+  ]},
+  {id:"C",name:"Programme Design",color:"#10B981",modules:[
+    {id:9,name:"Programme Design Fundamentals",sessions:8,
+     topics:["PAR-Q & health screening","SMART goal setting","Training phases — foundation to performance","Session structure — warm-up, main, cool-down","Volume, intensity, frequency variables","Rest & recovery planning","Client tracking & documentation"],
+     syllabus:`Module 9: Programme Design Fundamentals (Block C: Programme Design)
+TOPICS: PAR-Q & health screening (Physical Activity Readiness Questionnaire; medical clearance triggers; health history forms; AGILE intake process; informed consent; contraindication screening); SMART goal setting (Specific, Measurable, Achievable, Relevant, Time-bound; outcome vs process goals; short/medium/long-term goal layering; goal review cadence; motivational interviewing in goal setting); Training phases (foundation: movement quality, joint prep, GPP; hypertrophy/strength endurance; strength; power; sport-specific; phasing based on client needs and timeline); Session structure (dynamic warm-up 5-10 min: SMR + mobility + activation + movement prep; main block: strength, conditioning, or skill; cool-down: static stretch, breathing, parasympathetic recovery); Variables (volume: sets × reps × load; intensity: %1RM, RPE 1-10, RIR; frequency: sessions/week per muscle group; density: rest periods; tempo: eccentric/isometric/concentric; manipulation for goals); Recovery planning (48-hour muscle group recovery rule; deload frequency; sleep as recovery tool; active recovery protocols; HRV monitoring for advanced clients); Client tracking (session notes, progress photos, performance metrics, subjective wellbeing scores; AGILE Fit documentation standards).`},
+    {id:10,name:"Periodisation & Progressive Overload",sessions:6,
+     topics:["Linear periodisation","Undulating periodisation","Block periodisation","Deload weeks — when & how","Overload beyond weight","Supercompensation theory"],
+     syllabus:`Module 10: Periodisation & Progressive Overload (Block C: Programme Design)
+TOPICS: Linear periodisation (simplest model; progressive week-by-week load increase; suited to beginners; rep ranges shift from hypertrophy to strength; example 12-week structure); Undulating periodisation (daily or weekly volume/intensity variation; suited to intermediate clients; avoids accommodation; DUP for time-efficient clients); Block periodisation (distinct accumulation, transmutation, realisation blocks; advanced clients and athletes; Verkhoshansky origins; general population application); Deload weeks (every 4-8 weeks; volume reduction 40-60% while maintaining intensity; types: passive, active, technique deload; avoiding overtraining; psychological recovery); Overload beyond weight (tempo manipulation: 3-1-3 eccentric-pause-concentric; paused reps; reduced rest periods; increased ROM; instability; combination methods — directly applicable to home-based AGILE clients Krishna and Sumit); Supercompensation (GAS: alarm, resistance, exhaustion; stimulus → fatigue → recovery → supercompensation window; fitness-fatigue model; practical programme timing).`},
+    {id:11,name:"Special Populations",sessions:10,
+     topics:["Elderly — fall prevention, sarcopenia","Athletes — sport-specific programming","Weight loss — metabolic programming","Post-rehabilitation clients","Youth training principles","Desk workers & postural dysfunction","T2DM & hypertension clients","Pregnancy & postnatal","Ayurveda dosha-based programme design"],
+     syllabus:`Module 11: Special Populations (Block C: Programme Design)
+TOPICS: Elderly (sarcopenia: muscle loss with age; osteoporosis: impact loading contraindications and benefits; fall prevention: balance, reaction time, hip strengthening; cognitive benefits; medication interactions. Ash as partially relevant AGILE client); Athletes (sport-specific demands; energy system priority; peak and taper; injury prevention focus; pre/in-season programming); Weight loss (energy deficit principles; muscle preservation during fat loss; metabolic adaptation; NEAT enhancement; behaviour change; realistic timelines for Indian clients); Post-rehab (scope of practice; physiotherapist collaboration; clearance documentation; pain monitoring; conservative load progression; referral communication); Youth (nervous system plasticity; avoid maximal loading pre-puberty; motor skill development; movement literacy; growth plate considerations; enjoyment and adherence); Desk workers (8-hour seated posture consequences; lower and upper crossed syndrome prevalence; movement snack strategy; thoracic mobility priority; time-poor client programme design); T2DM & hypertension (Anaya is the live case study. Blood sugar gate pre-session; RPE cap; contraindications: Valsalva, isometrics, uncontrolled hypertension overhead press; post-exercise hypoglycaemia awareness; medication interactions: beta blockers, ACE inhibitors); Pregnancy & postnatal (first trimester considerations; diastasis recti; pelvic floor; supine position late pregnancy; postnatal return-to-training timeline; referral threshold); Ayurveda dosha-based design (Vata: fragile joints, irregular, grounding/consistency; Pitta: intensity-driven, overtraining risk, cooling/recovery; Kapha: slow to warm up, benefits from dynamic HIIT, consistency challenge).`},
+    {id:12,name:"Equipment & Tools",sessions:5,
+     topics:["Bodyweight progressions","Resistance bands","Kettlebells","TRX & suspension training","Cable machines","Medicine balls","Stability tools","Battle ropes","Home gym programming"],
+     syllabus:`Module 12: Equipment & Tools (Block C: Programme Design)
+TOPICS: Bodyweight (progressive overload via lever changes, tempo, volume, ROM; fundamental for home-based AGILE clients); Resistance bands (accommodating resistance; loop/tube/therapy band types; attachment points; advantages for travel/home; limitations); Kettlebells (swing: hip hinge power; Turkish get-up: full body integration; goblet squat, KB press, single arm row; ballistic vs grind movements; bell sizing by population); TRX & suspension (instability adds core demand; regression via body angle; exercises: row, chest press, fallout, single-leg squat; safety and anchor setup); Cable machines (constant tension through ROM; versatility: chop, Pallof, rows, pull-downs, face pulls; free vs selectorised; gym-based client programming); Medicine balls (rotational power; slam, throw, rotational press; plyometric application; partner and wall drills); Stability tools (BOSU: flat vs dome side for different demands; balance board; airex pad; proprioceptive training; acute ankle injury contraindication); Battle ropes (metabolic conditioning; undulation, alternating, bilateral waves; grip and shoulder endurance; EPOC application); Home gym programming (complete programmes with zero equipment; space considerations; Indian home context; creative substitutions).`}
+  ]},
+  {id:"D",name:"Nutrition",color:"#F59E0B",modules:[
+    {id:13,name:"Nutrition Science",sessions:10,
+     topics:["Macronutrients — protein, carbs, fat","Micronutrients — vitamins, minerals, electrolytes","Digestion & absorption","Metabolism & energy balance","Caloric needs — TDEE, BMR, activity multipliers","Hydration science","Gut health & microbiome basics","Ayurvedic nutrition principles"],
+     syllabus:`Module 13: Nutrition Science (Block D: Nutrition)
+TOPICS: Macronutrients (Protein: 4kcal/g, 20 amino acids, essential vs non-essential, complete vs incomplete, Indian vegetarian sources: dal/paneer/soy/eggs; Carbohydrates: 4kcal/g, simple vs complex, glycaemic index, fibre types, performance role; Fats: 9kcal/g, saturated/unsaturated/trans, omega-3/6 ratio, fat-soluble vitamins, ghee in Indian diet); Micronutrients (Vitamin D: epidemic deficiency in India, supplementation guidance; B12: vegetarian risk, testing, supplementation; Iron: menstrual women/vegetarians; Calcium, Zinc, Magnesium; electrolytes: sodium/potassium/chloride and hydration; Indian food sources for all); Digestion & absorption (mouth to colon; enzyme cascade; gastric acid; small intestine absorption; gut transit time; food combining myths vs reality; timing and exercise); Metabolism & energy balance (BMR: Mifflin-St Jeor equation; TEF: ~10%; NEAT: biggest variable; EEE; energy balance equation; metabolic adaptation); Caloric needs (TDEE = BMR × activity multiplier; fat loss: 500kcal deficit; muscle gain: 250-500kcal surplus; maintenance; refeeds and diet breaks); Hydration (35ml/kg/day baseline; sweat rate estimation; hyponatraemia risk; urine colour guide; electrolyte replacement in Indian heat; coconut water as electrolyte source); Gut health (microbiome diversity; prebiotic foods: fermented Indian foods — idli/dosa/kanji/lassi; dysbiosis impact on inflammation/mood/metabolism; fibre targets); Ayurvedic nutrition (Agni digestive fire; Ama toxins; food combining in Ayurveda; Ritucharya seasonal eating; dosha-balancing foods; integration with modern nutrition science).`},
+    {id:14,name:"Sports & Performance Nutrition",sessions:8,
+     topics:["Pre-workout nutrition timing & composition","Post-workout nutrition & MPS","Protein timing & dose","Carbohydrate periodisation","Supplements — within trainer scope","Fat loss vs muscle gain nutrition strategy","Indian diet adaptation"],
+     syllabus:`Module 14: Sports & Performance Nutrition (Block D: Nutrition)
+TOPICS: Pre-workout nutrition (1-3 hours pre: carb + protein, low fat/fibre; 30-60 min pre: quick carbs — banana/dates, small protein; Indian context: poha, upma, banana + curd; fasted training considerations); Post-workout & MPS (anabolic window: up to 2 hours, more flexible than previously thought; MPS triggers; 20-40g high-quality protein post-workout; leucine threshold ~3g for MPS initiation; carbs to restore glycogen); Protein timing & dose (4-5 protein meals throughout day for maximal MPS; 1.6-2.2g/kg/day for active individuals; 2.2-3.0g/kg for fat loss muscle preservation; Indian vegetarian protein combinations); Carbohydrate periodisation (higher carbs on training days, lower on rest; glycogen storage and depletion; carb cycling basics; aligning with training intensity); Supplements within trainer scope (whey/plant protein, creatine monohydrate: evidence-based for strength and muscle, caffeine: performance, omega-3, Vitamin D, B12, electrolytes; outside scope: prescriptive supplementation, fat burners, hormonal products); Fat loss vs muscle gain (concurrent goal challenges; body recomposition in beginners; cut vs bulk phases; mini-cut application); Indian diet adaptation (dal chawal as performance meal; ghee as MCT source; roti vs rice debate; dahi as probiotic + protein; Indian vegetarian athletes; Ramadan training adaptation).`},
+    {id:15,name:"Nutrition Coaching & Behaviour Change",sessions:7,
+     topics:["Trainer scope in nutrition","Habit-based coaching (PN method)","Client nutrition assessment","Behaviour change models","Meal planning frameworks","Special diets","Disordered eating — recognise & refer","Indian meal planning"],
+     syllabus:`Module 15: Nutrition Coaching & Behaviour Change (Block D: Nutrition)
+TOPICS: Trainer scope (what trainers can/cannot do legally and ethically; general guidelines vs prescriptive meal plans; RD/dietitian referral threshold; documentation); Precision Nutrition method (habit-based coaching; one habit at a time; slow rate of change for adherence; identity-based habits — James Clear overlap; coaching cadence); Client nutrition assessment (3-day food diary; 24-hour recall; food frequency questionnaire; dietary analysis without software; qualitative diet quality assessment); Behaviour change models (Transtheoretical model: pre-contemplation to maintenance; self-determination theory; motivational interviewing in nutrition context; ambivalence resolution); Meal planning frameworks (not prescriptive but structural: plate method — half veg/quarter protein/quarter carb; hand portion method — PN standard; calorie awareness without counting); Special diets (vegetarian/vegan: Indian default, protein optimisation; ketogenic: application, risks, when appropriate; intermittent fasting 16:8/5:2; elimination diets; cultural/religious dietary restrictions); Disordered eating (recognise: restriction, bingeing, excessive food rules, body dysmorphia language; role: hold space, avoid diet culture language, refer to RD or psychologist; ARISE parallel referral skill); Indian meal planning (thali as balanced meal framework; regional variation; street food navigation; social/family eating contexts; festival and celebration navigation).`}
+  ]},
+  {id:"E",name:"Longevity",color:"#EC4899",modules:[
+    {id:16,name:"Longevity Science",sessions:10,
+     topics:["VO2 max — mortality prediction","Zone 2 training — mechanism & prescription","HIIT vs Zone 2","80/20 polarised training model","Muscle mass preservation with age","Sarcopenia — causes & prevention","Sleep science — stages, HRV, recovery","Stress physiology — cortisol, HPA axis","HRV — measuring & interpreting","Chronic inflammation & disease","Mitochondrial health & biogenesis","Ayurveda Dinacharya & longevity","Telomere health & exercise"],
+     syllabus:`Module 16: Longevity Science (Block E: Longevity)
+TOPICS: VO2 max (maximal oxygen uptake; strongest predictor of all-cause mortality — Peter Attia longevity data; decline rate with age; trainability at all ages; target norms by age/sex); Zone 2 training (aerobic threshold; conversational pace; mitochondrial biogenesis; fat oxidation efficiency; lactate utilisation; 3-4 hrs/week prescription — Iñigo San Millán; Indian time-efficient implementation); HIIT vs Zone 2 (complementary not competitive; HIIT for VO2 max ceiling, Zone 2 for aerobic base; polarised model 80% low/20% high; avoiding the grey zone — moderate intensity high strain low adaptation); 80/20 polarised model (Stephen Seiler research; elite endurance athlete data; general population application; grey zone avoidance); Muscle mass preservation (anabolic resistance with age; higher protein requirement 1.6-2.2g/kg minimum; progressive resistance training non-negotiable after 40; type II fibre preferential loss; functional strength for independence); Sarcopenia (defined: low muscle mass + low strength + low physical performance; causes: disuse/inflammation/hormonal/nutritional; prevention strategies; screening: grip strength, chair stand test); Sleep science (stages: N1/N2/N3 slow wave/REM; HGH release in slow wave; memory consolidation in REM; sleep debt; blue light; Indian sleep culture and chronotype; impact on cortisol/hunger hormones/insulin sensitivity); Stress physiology (HPA axis; cortisol circadian rhythm; allostatic load; chronic stress: immune suppression, belly fat accumulation; exercise as stress buffer vs stressor); HRV (heart rate variability as CNS recovery proxy; measurement: Polar H10, Elite HRV app; morning resting HRV; population norms; training load adjustment from HRV trends); Chronic inflammation (inflammaging; CRP — C-reactive protein; dietary inflammation index; visceral fat as pro-inflammatory; exercise as anti-inflammatory; omega-3/curcumin/polyphenols); Mitochondrial health (mitochondria as energy factories; biogenesis via Zone 2 and caloric restriction; NAD+ precursors: NMN/NR; fasting and mitophagy; practical diet and training implications); Ayurveda Dinacharya (daily routine alignment with circadian biology; Rasayana rejuvenation herbs: Ashwagandha/Shatavari/Amalaki; evidence-based longevity herb context); Telomere health (biological age markers; telomerase activity; aerobic exercise and telomere length evidence; lifestyle factors affecting telomere attrition).`}
+  ]},
+  {id:"F",name:"Coaching Business",color:"#8B5CF6",modules:[
+    {id:17,name:"Psychology of Coaching & Behaviour Change",sessions:7,
+     topics:["Motivational interviewing (MI)","Transtheoretical model — stages of change","Self-determination theory","Growth mindset in coaching","Active listening & empathy","Cueing — external vs internal focus research","Client retention strategies","Difficult client scenarios"],
+     syllabus:`Module 17: Psychology of Coaching & Behaviour Change (Block F: Coaching Business)
+TOPICS: Motivational interviewing (OARS: Open questions, Affirmations, Reflective listening, Summaries; change talk vs sustain talk; rolling with resistance; spirit of MI: partnership/acceptance/compassion/evocation; AGILE session application); Transtheoretical model (pre-contemplation → contemplation → preparation → action → maintenance → relapse; tailoring coaching style to stage; avoiding pushing action-stage strategies on pre-contemplators); Self-determination theory (autonomy, competence, relatedness as basic psychological needs; intrinsic vs extrinsic motivation; autonomy-supportive environments; why punishment/shame destroys adherence); Growth mindset — Carol Dweck (fixed vs growth mindset in clients; process praise vs outcome praise; reframing setbacks; building resilience for long-term adherence); Active listening & empathy (hearing vs listening; reflective listening: content/feeling/meaning; non-verbal cues in online sessions; avoiding the righting reflex; empathy vs sympathy); Cueing research (external focus: 'move the bar'/'push the floor away' consistently outperforms internal focus: 'squeeze your glutes' — Gabriele Wulf research; practical cueing language; when internal focus is appropriate in rehabilitation/body awareness); Client retention (onboarding experience; milestone celebration; communication frequency; re-engagement protocols; dropout warning signs; AGILE retention strategy); Difficult clients (resistant, plateauing, excuse-maker, overtrained, emotionally dependent; role-play and scripted responses; professional boundary setting).`},
+    {id:18,name:"Online Business & Scaling",sessions:8,
+     topics:["Moving from in-person to online coaching","1-on-1 online coaching model","Group coaching — design & delivery","Digital products","Live streaming & virtual group sessions","Platforms — Trainerize, Zoom, YouTube, Instagram","Content strategy & social media","Pricing, packages & recurring revenue","Building referral networks","Indian fitness market specifics","AGILE brand growth strategy"],
+     syllabus:`Module 18: Online Business & Scaling (Block F: Coaching Business)
+TOPICS: Moving online (synchronous vs asynchronous delivery; video demonstration library; client self-service vs high-touch; hybrid model as AGILE's current position); 1-on-1 online model (Zoom/Google Meet delivery; async check-in models; WhatsApp as Indian client communication norm; session recording policy; client management tools); Group coaching (programme cohort model; accountability group; live group sessions; pricing leverage; community building; Indian joint family workout opportunity); Digital products (done-for-you workout plans PDF/app; nutrition guides; e-books; AGILE 21-day challenges; passive income; pricing ₹299-₹2999 for Indian market); Live streaming (YouTube Live, Instagram Live, Zoom; equipment: phone/ring light/tripod for ₹2000-5000; engagement during live; replay value); Platforms (Trainerize: app-based programme delivery; AGILE Fit custom app; YouTube: content SEO; Instagram: social proof; WhatsApp Business: Indian client CRM default); Content strategy (educational content as trust builder; content pillars: education/transformation/behind-scenes/science; Reels for reach; consistency over virality; AGILE Fit app as content hub); Pricing & packages (₹900/session current AGILE rate; monthly retainer vs per-session; package anchoring 3/6-month; referral incentives; nutrition add-on upsell; corporate wellness entry point); Referral networks (Dr. Bhooshan Shukla model from ARISE; physiotherapist partnerships; nutritionist cross-referral; corporate HR wellness; Pune-specific network building); Indian fitness market (₹5000-15000/month tolerance for serious clients; trust via credentials and before/after; WhatsApp as primary CRM; seasonal trends: pre-wedding/post-Diwali/January; language considerations); AGILE brand growth strategy (AGILE Fit app as differentiator; ARISE clinical referral pipeline as credibility; longevity positioning for 40+ urban professionals; online scale to ₹90,800/month target).`}
+  ]}
+];
+
+const ALL_MODULES = CURRICULUM.flatMap(b => b.modules);
+const TOTAL = ALL_MODULES.length;
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let state = {
+  apiKey: BAKED_KEY || '',
+  apiKeySet: !!BAKED_KEY,
+  tab: 'progress',
+  status: {},
+  log: [],
+  expanded: {},
+  saved: false,
+  study: {
+    phase: 'select',
+    moduleId: null,
+    lessonContent: '',
+    testData: null,
+    testAnswers: { mcq: [], caseStudy: '' },
+    testResult: null,
+    errorMsg: ''
+  }
+};
+
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+
+function loadState(){
+  const s=lsGet('arise:status');if(s)state.status=JSON.parse(s);
+  const l=lsGet('arise:log');if(l)state.log=JSON.parse(l);
+  if(!BAKED_KEY){const k=lsGet('arise:apikey');if(k){state.apiKey=k;state.apiKeySet=true;}}
+}
+function saveStatus(){lsSet('arise:status',JSON.stringify(state.status));}
+function saveLog(){lsSet('arise:log',JSON.stringify(state.log));}
+function saveApiKey(k){lsSet('arise:apikey',k);}
+
+function getM(id){return state.status[id]||{status:'not_started',mcq:null,cs:null,notes:''};}
+function countDone(){return Object.values(state.status).filter(m=>m.status==='complete').length;}
+function pct(){return Math.round((countDone()/TOTAL)*100);}
+function totalHrs(){return(state.log.reduce((s,l)=>s+Number(l.minutes),0)/60).toFixed(1);}
+function getBlock(moduleId){return CURRICULUM.find(b=>b.modules.some(m=>m.id===moduleId));}
+function flash(){state.saved=true;render();setTimeout(()=>{state.saved=false;render();},2000);}
+
+function mdToHtml(text){
+  if(!text)return '';
+  const lines=text.split('\n');
+  let html='',inUl=false,inOl=false;
+  for(let line of lines){
+    line=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    line=line.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+    line=line.replace(/\*(.+?)\*/g,'<em>$1</em>');
+    line=line.replace(/`(.+?)`/g,'<code>$1</code>');
+    if(/^# (.+)/.test(line)){if(inUl){html+='</ul>';inUl=false;}if(inOl){html+='</ol>';inOl=false;}html+=`<h1>${line.replace(/^# /,'')}</h1>`;}
+    else if(/^## (.+)/.test(line)){if(inUl){html+='</ul>';inUl=false;}if(inOl){html+='</ol>';inOl=false;}html+=`<h2>${line.replace(/^## /,'')}</h2>`;}
+    else if(/^### (.+)/.test(line)){if(inUl){html+='</ul>';inUl=false;}if(inOl){html+='</ol>';inOl=false;}html+=`<h3>${line.replace(/^### /,'')}</h3>`;}
+    else if(/^[-*] (.+)/.test(line)){if(inOl){html+='</ol>';inOl=false;}if(!inUl){html+='<ul>';inUl=true;}html+=`<li>${line.replace(/^[-*] /,'')}</li>`;}
+    else if(/^\d+\. (.+)/.test(line)){if(inUl){html+='</ul>';inUl=false;}if(!inOl){html+='<ol>';inOl=true;}html+=`<li>${line.replace(/^\d+\. /,'')}</li>`;}
+    else if(line.trim()===''){if(inUl){html+='</ul>';inUl=false;}if(inOl){html+='</ol>';inOl=false;}html+='<br>';}
+    else{if(inUl){html+='</ul>';inUl=false;}if(inOl){html+='</ol>';inOl=false;}html+=`<p>${line}</p>`;}
+  }
+  if(inUl)html+='</ul>';if(inOl)html+='</ol>';
+  return html;
+}
+
+async function callClaude(prompt,maxTokens=4000){
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':state.apiKey,'anthropic-version':'2023-06-01'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens,messages:[{role:'user',content:prompt}]})
+  });
+  const data=await resp.json();
+  if(data.error)throw new Error(data.error.message);
+  return data.content[0].text;
+}
+
+async function startLesson(moduleId){
+  const mod=ALL_MODULES.find(m=>m.id===moduleId);
+  const block=getBlock(moduleId);
+  state.study={phase:'loading',moduleId,lessonContent:'',testData:null,testAnswers:{mcq:[],caseStudy:''},testResult:null,errorMsg:''};
+  state.tab='study';render();
+  try{
+    const prompt=`You are a world-class fitness coach educator teaching Amod Ghanekar — 13 years hands-on experience as remedial educator and fitness trainer in Pune, India. He completed CNES Functional Training Specialist certification and is pursuing a complete self-study certification programme.
+
+STUDENT PROFILE:
+- 13 years hands-on experience; strong intuitive knowledge, now formalising theory
+- Indian context: urban Pune clients, vegetarian diet common, home-based training common
+- AGILE clients: Krishna (weight loss, home bodyweight), Anaya (T2DM + hypertension — strict contraindications), Ash (postmenopausal, home-based), Sumit (fat loss + posture)
+- Also runs ARISE Learning Centre (neurodivergent children remediation)
+- Supervising clinician: Dr. Bhooshan Shukla (paediatric psychiatrist, Pune)
+
+MODULE TO TEACH:
+Block ${block.id}: ${block.name} | Module ${moduleId}: ${mod.name}
+
+SYLLABUS:
+${mod.syllabus}
+
+TEACHING FORMAT — use markdown headings exactly as shown:
+
+# Module ${moduleId}: ${mod.name}
+
+## Concept Explanation
+[Thorough certification-level teaching of every topic in the syllabus. Precise anatomical/physiological terminology. Reference-quality content.]
+
+## Real-World Examples
+[2-3 vivid concrete examples from real coaching. Indian context. Reference Amod's clients where relevant.]
+
+## Practical Application — Your Toolkit
+[5-8 numbered actionable takeaways Amod can use in AGILE sessions THIS WEEK. Client-specific where relevant.]
+
+## Key Terms Glossary
+[8-12 essential terms with crisp 1-2 sentence definitions.]
+
+---
+[1-2 sentence motivational close specific to this module.]`;
+    const text=await callClaude(prompt,4000);
+    state.study.lessonContent=text;
+    state.study.phase='lesson';
+    const m=getM(moduleId);
+    if(m.status==='not_started'){state.status[moduleId]={...m,status:'in_progress'};saveStatus();}
+  }catch(e){state.study.phase='error';state.study.errorMsg=e.message;}
+  render();
+}
+
+async function generateTest(moduleId){
+  const mod=ALL_MODULES.find(m=>m.id===moduleId);
+  const block=getBlock(moduleId);
+  state.study.phase='test-loading';render();
+  try{
+    const prompt=`Generate a certification-level assessment for Amod Ghanekar on Module ${moduleId}: ${mod.name} (Block ${block.id}: ${block.name}).
+
+SYLLABUS:
+${mod.syllabus}
+
+RULES: 5 MCQs testing distinct concepts, all 4 options plausible, one correct. 1 Case Study using realistic Indian AGILE client scenario requiring multi-concept application. Expert difficulty — 13 years experience formalising intuitive knowledge.
+
+Return ONLY valid JSON, no markdown, no backticks:
+{"mcqs":[{"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"correct":"A","explanation":"..."},{"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"correct":"B","explanation":"..."},{"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"correct":"C","explanation":"..."},{"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"correct":"A","explanation":"..."},{"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"correct":"D","explanation":"..."}],"caseStudy":{"scenario":"...","question":"..."}}`;
+    const raw=await callClaude(prompt,2000);
+    const test=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    state.study.testData=test;
+    state.study.testAnswers={mcq:new Array(5).fill(''),caseStudy:''};
+    state.study.phase='test';
+  }catch(e){state.study.phase='error';state.study.errorMsg='Test generation failed: '+e.message;}
+  render();
+}
+
+async function submitTest(){
+  const{moduleId,testData,testAnswers}=state.study;
+  const mod=ALL_MODULES.find(m=>m.id===moduleId);
+  state.study.phase='evaluating';render();
+  let mcqScore=0;
+  const mcqFeedback=[];
+  for(let i=0;i<5;i++){
+    const correct=testAnswers.mcq[i]===testData.mcqs[i].correct;
+    if(correct)mcqScore++;
+    mcqFeedback.push({q:testData.mcqs[i].question,userAnswer:testAnswers.mcq[i],correct:testData.mcqs[i].correct,isCorrect:correct,explanation:testData.mcqs[i].explanation});
+  }
+  const mcqPct=Math.round((mcqScore/5)*100);
+  let csResult={score:0,pass:false,strengths:[],gaps:['No answer provided'],modelAnswer:''};
+  if(testAnswers.caseStudy.trim()){
+    try{
+      const csPrompt=`Evaluate this certification exam answer from Amod Ghanekar (13 years experience, Pune fitness trainer).
+MODULE: ${mod.name}
+SCENARIO: ${testData.caseStudy.scenario}
+QUESTION: ${testData.caseStudy.question}
+ANSWER: ${testAnswers.caseStudy}
+Evaluate strictly: accuracy of concepts, completeness, practical application quality, safety considerations.
+Return ONLY valid JSON: {"score":85,"pass":true,"strengths":["...","..."],"gaps":["..."],"modelAnswer":"..."}`;
+      const raw=await callClaude(csPrompt,800);
+      csResult=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    }catch(e){csResult={score:50,pass:false,strengths:[],gaps:['Evaluation error — check your answer and retry'],modelAnswer:''};}
+  }
+  const overallPass=mcqPct>=80&&csResult.pass;
+  state.study.testResult={mcqPct,mcqFeedback,csResult,overallPass};
+  state.study.phase='results';
+  const m=getM(moduleId);
+  state.status[moduleId]={...m,status:overallPass?'complete':'in_progress',mcq:mcqPct,cs:csResult.score,notes:csResult.gaps?.join('; ')||''};
+  saveStatus();render();
+}
+
+function render(){
+  const root=document.getElementById('root');
+  if(!state.apiKeySet){root.innerHTML=renderApiKeyScreen();return;}
+  root.innerHTML=`${renderHeader()}<div style="max-width:720px;margin:0 auto;padding:16px 16px 80px">${
+    state.tab==='progress'?renderProgress():
+    state.tab==='study'?renderStudy():
+    state.tab==='log'?renderLog():
+    state.tab==='tests'?renderTests():
+    renderHistory()}</div>`;
+}
+
+function renderApiKeyScreen(){
+  return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px">
+    <div style="max-width:440px;width:100%;text-align:center">
+      <div style="font-size:10px;letter-spacing:3px;color:#6366F1;font-weight:800;text-transform:uppercase;margin-bottom:12px">AGILE · ARISE</div>
+      <div style="font-size:26px;font-weight:900;margin-bottom:6px">Fitness Coach Certification</div>
+      <div style="font-size:13px;color:#475569;margin-bottom:40px">Amod Ghanekar &nbsp;·&nbsp; 18 Modules &nbsp;·&nbsp; 6 Blocks</div>
+      <div class="card" style="text-align:left">
+        <div style="font-size:14px;font-weight:700;margin-bottom:6px">Enter your Anthropic API key</div>
+        <div style="font-size:12px;color:#64748B;margin-bottom:16px">Saved locally in your browser. Never sent anywhere except Anthropic's servers.</div>
+        <input id="api-input" type="password" placeholder="sk-ant-..." class="inp" style="margin-bottom:12px">
+        <button class="btn-primary" onclick="handleApiKey()">Start Learning →</button>
+        <div style="font-size:11px;color:#475569;margin-top:12px;text-align:center">Get your key at console.anthropic.com → API Keys</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHeader(){
+  const d=countDone(),p=pct();
+  return`<div style="background:#1E293B;border-bottom:1px solid #334155;padding:14px 20px 0;position:sticky;top:0;z-index:100">
+    <div style="max-width:720px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-size:10px;letter-spacing:3px;color:#6366F1;font-weight:800;text-transform:uppercase">AGILE · ARISE</div>
+          <div style="font-size:16px;font-weight:900;margin-top:2px">Fitness Coach Certification</div>
+          <div style="font-size:11px;color:#475569;margin-top:1px">Amod Ghanekar</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:28px;font-weight:900;color:${p>0?'#6366F1':'#334155'}">${p}%</div>
+          <div style="font-size:10px;color:#475569">${d}/${TOTAL} modules done</div>
+          ${!BAKED_KEY?`<button onclick="handleChangeKey()" style="font-size:10px;color:#475569;background:none;border:none;cursor:pointer;margin-top:2px;text-decoration:underline">⚙ change key</button>`:''}
+        </div>
+      </div>
+      <div style="height:3px;background:#0F172A;border-radius:2px;overflow:hidden;margin-bottom:0">
+        <div style="height:100%;width:${p}%;background:linear-gradient(90deg,#6366F1,#0EA5E9);border-radius:2px;transition:width 0.5s"></div>
+      </div>
+      <div style="display:flex;margin-top:10px">
+        ${['progress','study','log','tests','history'].map(t=>`<button class="tab-btn ${state.tab===t?'active':''}" onclick="switchTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderProgress(){
+  return CURRICULUM.map(block=>{
+    const blockDone=block.modules.filter(m=>getM(m.id).status==='complete').length;
+    return`<div style="margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:10px;height:10px;border-radius:2px;background:${block.color}"></div>
+          <div style="font-size:12px;font-weight:800;color:${block.color};letter-spacing:0.5px">BLOCK ${block.id}: ${block.name.toUpperCase()}</div>
+        </div>
+        <div style="font-size:11px;color:#475569">${blockDone}/${block.modules.length} done</div>
+      </div>
+      ${block.modules.map(mod=>{
+        const m=getM(mod.id);
+        const sc=m.status==='complete'?'#10B981':m.status==='in_progress'?'#F59E0B':'#334155';
+        const lbl=m.status==='complete'?'✓':m.status==='in_progress'?'▶':'·';
+        return`<div class="module-card ${m.status==='complete'?'done':m.status==='in_progress'?'active':''}">
+          <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer" onclick="toggleExpand(${mod.id})">
+            <button onclick="event.stopPropagation();cycleStatusBtn(${mod.id})"
+              style="width:22px;height:22px;border-radius:5px;background:${sc};border:1px solid ${sc};color:#fff;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0">${lbl}</button>
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:700">M${mod.id}: ${mod.name}</div>
+              <div style="font-size:10px;color:#475569;margin-top:1px">${mod.sessions} sessions · ${mod.topics.length} topics${m.mcq!=null?` · MCQ: ${m.mcq}% · Case: ${m.cs}%`:''}</div>
+            </div>
+            <button onclick="event.stopPropagation();startStudyBtn(${mod.id})"
+              style="background:#6366F1;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">Study →</button>
+          </div>
+          ${state.expanded[mod.id]?`<div style="padding:0 14px 12px;border-top:1px solid #263447">
+            ${mod.topics.map(t=>`<div style="font-size:11px;color:#64748B;padding:3px 0;border-bottom:1px solid #1a2535;display:flex;gap:6px"><span style="color:${block.color};font-size:13px">›</span>${t}</div>`).join('')}
+          </div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function renderStudy(){
+  const{phase,moduleId,lessonContent,testData,testAnswers,testResult,errorMsg}=state.study;
+  if(phase==='select'){
+    return`<div>
+      <div style="font-size:13px;font-weight:700;color:#64748B;margin-bottom:16px">Choose a module to study:</div>
+      ${CURRICULUM.map(block=>`<div style="margin-bottom:16px">
+        <div style="font-size:10px;font-weight:800;color:${block.color};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Block ${block.id}: ${block.name}</div>
+        ${block.modules.map(mod=>{
+          const m=getM(mod.id);
+          return`<div style="background:#1E293B;border-radius:9px;padding:10px 14px;margin-bottom:5px;display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid #1E293B;transition:border-color 0.15s"
+              onclick="startStudyBtn(${mod.id})" onmouseover="this.style.borderColor='#4f46e5'" onmouseout="this.style.borderColor='#1E293B'">
+            <div style="width:8px;height:8px;border-radius:50%;background:${m.status==='complete'?'#10B981':m.status==='in_progress'?'#F59E0B':'#334155'};flex-shrink:0"></div>
+            <div style="flex:1;font-size:12px;font-weight:600">M${mod.id}: ${mod.name}</div>
+            <span style="font-size:11px;color:#6366F1;font-weight:700">Study →</span>
+          </div>`;
+        }).join('')}
+      </div>`).join('')}
+    </div>`;
+  }
+  if(phase==='loading'){
+    return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:16px;text-align:center">
+      <div class="spin" style="width:40px;height:40px;border:3px solid #334155;border-top-color:#6366F1;border-radius:50%"></div>
+      <div style="font-size:14px;color:#64748B">Generating your lesson...</div>
+      <div style="font-size:12px;color:#475569">Calibrated to your 13 years of experience &amp; Indian client context</div>
+    </div>`;
+  }
+  if(phase==='lesson'){
+    const mod=ALL_MODULES.find(m=>m.id===moduleId);
+    const block=getBlock(moduleId);
+    return`<div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:10px;color:${block.color};font-weight:800;letter-spacing:1px;text-transform:uppercase">Block ${block.id}: ${block.name}</div>
+          <div style="font-size:14px;font-weight:800;margin-top:2px">M${moduleId}: ${mod.name}</div>
+        </div>
+        <button class="btn-secondary" onclick="state.study.phase='select';render()">← Modules</button>
+      </div>
+      <div class="card"><div class="lesson-content">${mdToHtml(lessonContent)}</div></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-secondary" style="flex:1" onclick="startStudyBtn(${moduleId})">↺ Re-read</button>
+        <button class="btn-primary" style="flex:2" onclick="generateTest(${moduleId})">Take Module Test →</button>
+      </div>
+    </div>`;
+  }
+  if(phase==='test-loading'||phase==='evaluating'){
+    const msg=phase==='test-loading'?'Generating your test...':'Evaluating your answers...';
+    const sub=phase==='test-loading'?'Expert-level questions calibrated to this module':'AI is assessing your case study in depth...';
+    return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:16px;text-align:center">
+      <div class="spin" style="width:40px;height:40px;border:3px solid #334155;border-top-color:#10B981;border-radius:50%"></div>
+      <div style="font-size:14px;color:#64748B">${msg}</div>
+      <div style="font-size:12px;color:#475569">${sub}</div>
+    </div>`;
+  }
+  if(phase==='test'){
+    const mod=ALL_MODULES.find(m=>m.id===moduleId);
+    return`<div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <div style="font-size:10px;color:#10B981;font-weight:800;letter-spacing:1px;text-transform:uppercase">Module Test</div>
+          <div style="font-size:14px;font-weight:800;margin-top:2px">M${moduleId}: ${mod.name}</div>
+        </div>
+        <div style="font-size:12px;color:#F59E0B;font-weight:700">Pass mark: 80%</div>
+      </div>
+      <div class="label" style="margin-bottom:10px">PART A — MCQ (5 Questions)</div>
+      ${testData.mcqs.map((q,i)=>`<div class="card" style="margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;line-height:1.5">Q${i+1}. ${q.question}</div>
+        ${q.options.map(opt=>{
+          const letter=opt.charAt(0);
+          const sel=testAnswers.mcq[i]===letter;
+          return`<button class="mcq-option ${sel?'selected':''}" onclick="selectMcq(${i},'${letter}')">${opt}</button>`;
+        }).join('')}
+      </div>`).join('')}
+      <div class="label" style="margin:16px 0 10px">PART B — CASE STUDY</div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="background:#263447;border-radius:7px;padding:12px;margin-bottom:10px;font-size:12px;color:#94A3B8;line-height:1.6">
+          <strong style="color:#F59E0B">Scenario:</strong> ${testData.caseStudy.scenario}
+        </div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">${testData.caseStudy.question}</div>
+        <textarea id="cs-answer" rows="7" class="inp" placeholder="Write your detailed answer here..." style="line-height:1.6" oninput="state.study.testAnswers.caseStudy=this.value">${testAnswers.caseStudy}</textarea>
+      </div>
+      <button class="btn-green" onclick="handleSubmitTest()">Submit for AI Evaluation →</button>
+    </div>`;
+  }
+  if(phase==='results'){
+    const{mcqPct,mcqFeedback,csResult,overallPass}=testResult;
+    const mod=ALL_MODULES.find(m=>m.id===moduleId);
+    return`<div>
+      <div style="background:${overallPass?'#064e3b':'#450a0a'};border:1px solid ${overallPass?'#10B981':'#EF4444'};border-radius:12px;padding:20px;margin-bottom:16px;text-align:center">
+        <div style="font-size:26px;font-weight:900;color:${overallPass?'#10B981':'#EF4444'}">${overallPass?'✓ PASSED':'✗ NOT YET'}</div>
+        <div style="font-size:13px;font-weight:700;margin-top:4px">${overallPass?'Module '+moduleId+' complete!':'Review the gaps and retake'}</div>
+        <div style="display:flex;justify-content:center;gap:32px;margin-top:12px">
+          <div><div style="font-size:22px;font-weight:900;color:${mcqPct>=80?'#10B981':'#EF4444'}">${mcqPct}%</div><div style="font-size:11px;color:#64748B">MCQ</div></div>
+          <div><div style="font-size:22px;font-weight:900;color:${csResult.score>=80?'#10B981':'#EF4444'}">${csResult.score}%</div><div style="font-size:11px;color:#64748B">Case Study</div></div>
+        </div>
+      </div>
+      <div class="label" style="margin-bottom:10px">MCQ BREAKDOWN</div>
+      ${mcqFeedback.map((f,i)=>`<div style="background:#1E293B;border-radius:9px;padding:12px;margin-bottom:6px;border-left:3px solid ${f.isCorrect?'#10B981':'#EF4444'}">
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px">${f.isCorrect?'✓':'✗'} Q${i+1}: ${f.q}</div>
+        ${!f.isCorrect?`<div style="font-size:11px;color:#F59E0B;margin-bottom:4px">Your answer: ${f.userAnswer||'—'} · Correct: ${f.correct}</div>`:''}
+        <div style="font-size:11px;color:#64748B;line-height:1.5">${f.explanation}</div>
+      </div>`).join('')}
+      <div class="label" style="margin:16px 0 10px">CASE STUDY FEEDBACK</div>
+      <div class="card">
+        ${csResult.strengths?.length?`<div style="margin-bottom:10px"><div style="font-size:11px;color:#10B981;font-weight:700;margin-bottom:5px">STRENGTHS</div>${csResult.strengths.map(s=>`<div style="font-size:12px;color:#94A3B8;margin-bottom:3px">• ${s}</div>`).join('')}</div>`:''}
+        ${csResult.gaps?.length?`<div style="margin-bottom:10px"><div style="font-size:11px;color:#EF4444;font-weight:700;margin-bottom:5px">GAPS TO REVIEW</div>${csResult.gaps.map(g=>`<div style="font-size:12px;color:#94A3B8;margin-bottom:3px">• ${g}</div>`).join('')}</div>`:''}
+        ${csResult.modelAnswer?`<div><div style="font-size:11px;color:#6366F1;font-weight:700;margin-bottom:5px">MODEL ANSWER</div><div style="font-size:12px;color:#64748B;line-height:1.6">${csResult.modelAnswer}</div></div>`:''}
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn-secondary" style="flex:1" onclick="generateTest(${moduleId})">↺ Retake</button>
+        <button class="btn-primary" style="flex:2" onclick="state.study.phase='select';render()">Next Module →</button>
+      </div>
+    </div>`;
+  }
+  if(phase==='error'){
+    return`<div class="card" style="text-align:center">
+      <div style="color:#EF4444;font-size:14px;font-weight:700;margin-bottom:8px">Something went wrong</div>
+      <div style="font-size:12px;color:#64748B;margin-bottom:16px;word-break:break-all">${errorMsg}</div>
+      <div style="font-size:12px;color:#475569;margin-bottom:16px">Check your API key is valid and has credits.</div>
+      <button class="btn-secondary" onclick="state.study.phase='select';render()">← Back to modules</button>
+    </div>`;
+  }
+  return'';
+}
+
+function renderLog(){
+  return`<div class="card">
+    <div style="font-size:15px;font-weight:800;margin-bottom:16px">Log Study Session</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div><div class="label">Date</div><input id="log-date" type="date" class="inp" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><div class="label">Minutes</div><input id="log-min" type="number" class="inp" value="30" min="5" max="240"></div>
+        <div style="flex:2"><div class="label">Module</div>
+          <select id="log-module" class="inp" style="cursor:pointer">
+            ${CURRICULUM.map(b=>b.modules.map(m=>`<option value="${m.id}">M${m.id}: ${m.name}</option>`).join('')).join('')}
+          </select>
+        </div>
+      </div>
+      <div><div class="label">What you covered</div><textarea id="log-topic" rows="3" class="inp" placeholder="e.g. Energy systems — ATP-PCr, glycolytic, oxidative pathways and sport application"></textarea></div>
+      <button class="${state.saved?'btn-green':'btn-primary'}" onclick="logSessionBtn()">${state.saved?'✓ Session logged!':'Log Session →'}</button>
+    </div>
+  </div>`;
+}
+
+function renderTests(){
+  const scores=[];
+  CURRICULUM.forEach(b=>b.modules.forEach(mod=>{
+    const m=getM(mod.id);
+    if(m.mcq!=null||m.cs!=null)scores.push({mod,m,block:b});
+  }));
+  return`<div>
+    <div class="card">
+      <div style="font-size:15px;font-weight:800;margin-bottom:4px">Record Test Score</div>
+      <div style="font-size:11px;color:#475569;margin-bottom:16px">Manually record scores from external tests. Pass mark: 80% on both.</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div><div class="label">Module</div>
+          <select id="test-module" class="inp" style="cursor:pointer">
+            ${CURRICULUM.map(b=>b.modules.map(m=>`<option value="${m.id}">M${m.id}: ${m.name}</option>`).join('')).join('')}
+          </select>
+        </div>
+        <div style="display:flex;gap:10px">
+          <div style="flex:1"><div class="label">MCQ %</div><input id="test-mcq" type="number" class="inp" min="0" max="100" placeholder="0–100"></div>
+          <div style="flex:1"><div class="label">Case Study %</div><input id="test-cs" type="number" class="inp" min="0" max="100" placeholder="0–100"></div>
+        </div>
+        <div><div class="label">Gaps / Notes</div><textarea id="test-notes" rows="2" class="inp" placeholder="Topics to revisit..."></textarea></div>
+        <button class="btn-green" onclick="saveTestBtn()" style="background:${state.saved?'#059669':'#10B981'}">${state.saved?'✓ Score saved!':'Save Score ✓'}</button>
+      </div>
+    </div>
+    ${scores.length?`<div class="label" style="margin-bottom:10px">ALL SCORES</div>
+    ${scores.map(({mod,m,block})=>{
+      const avg=m.mcq!=null&&m.cs!=null?Math.round((+m.mcq+ +m.cs)/2):+(m.mcq??m.cs);
+      const pass=avg>=80;
+      return`<div style="background:#1E293B;border-radius:9px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px">
+        <div style="width:8px;height:8px;border-radius:50%;background:${block.color};flex-shrink:0"></div>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:600">M${mod.id}: ${mod.name}</div>
+          ${m.notes?`<div style="font-size:11px;color:#F59E0B;margin-top:2px">📝 ${m.notes}</div>`:''}
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          ${m.mcq!=null?`<div style="font-size:11px;color:#94A3B8">MCQ <span style="color:${+m.mcq>=80?'#22c55e':'#ef4444'};font-weight:700">${m.mcq}%</span></div>`:''}
+          ${m.cs!=null?`<div style="font-size:11px;color:#94A3B8">Case <span style="color:${+m.cs>=80?'#22c55e':'#ef4444'};font-weight:700">${m.cs}%</span></div>`:''}
+          <div style="font-size:14px;font-weight:900;color:${pass?'#22c55e':'#ef4444'}">${pass?'✓':'✗'}</div>
+        </div>
+      </div>`;
+    }).join('')}`:''}
+  </div>`;
+}
+
+function renderHistory(){
+  return`<div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:14px;font-weight:800">Study History</div>
+      <div style="font-size:11px;color:#475569">${state.log.length} sessions · ${totalHrs()}h total</div>
+    </div>
+    ${state.log.length===0?`<div class="card" style="text-align:center;color:#475569;padding:32px">No sessions yet.<br><span style="color:#6366F1;font-weight:700">Start studying and log your first session!</span></div>`:''}
+    ${state.log.map(entry=>{
+      const mod=ALL_MODULES.find(m=>m.id===Number(entry.moduleId));
+      const block=CURRICULUM.find(b=>b.modules.some(m=>m.id===Number(entry.moduleId)));
+      return`<div style="background:#1E293B;border-radius:9px;padding:10px 14px;margin-bottom:6px;border-left:3px solid ${block?.color||'#334155'}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <div style="font-size:11px;font-weight:700;color:#94A3B8">${entry.date}</div>
+          <div style="font-size:12px;color:#6366F1;font-weight:800">${entry.minutes} min</div>
+        </div>
+        <div style="font-size:11px;color:#475569;margin-bottom:3px">M${entry.moduleId}: ${mod?.name||''}</div>
+        <div style="font-size:13px;color:#CBD5E1">${entry.topic}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function handleApiKey(){
+  const k=document.getElementById('api-input').value.trim();
+  if(!k||!k.startsWith('sk-')){alert('Please enter a valid Anthropic API key (starts with sk-)');return;}
+  state.apiKey=k;state.apiKeySet=true;saveApiKey(k);render();
+}
+function handleChangeKey(){state.apiKeySet=false;state.apiKey='';render();}
+function switchTab(t){state.tab=t;if(t==='study'&&!['select','lesson','test','results','error'].includes(state.study.phase))state.study.phase='select';render();}
+function toggleExpand(id){state.expanded[id]=!state.expanded[id];render();}
+function cycleStatusBtn(id){const cur=getM(id).status;const next=cur==='not_started'?'in_progress':cur==='in_progress'?'complete':'not_started';state.status[id]={...getM(id),status:next};saveStatus();render();}
+function startStudyBtn(id){startLesson(id);}
+function selectMcq(i,letter){state.study.testAnswers.mcq[i]=letter;render();const el=document.getElementById('cs-answer');if(el)el.value=state.study.testAnswers.caseStudy;}
+function handleSubmitTest(){const el=document.getElementById('cs-answer');if(el)state.study.testAnswers.caseStudy=el.value;submitTest();}
+async function logSessionBtn(){
+  const date=document.getElementById('log-date')?.value;
+  const minutes=document.getElementById('log-min')?.value;
+  const moduleId=document.getElementById('log-module')?.value;
+  const topic=document.getElementById('log-topic')?.value?.trim();
+  if(!topic){alert('Please enter what you covered');return;}
+  state.log=[{id:Date.now(),date,minutes,moduleId,topic},...state.log];saveLog();flash();
+}
+async function saveTestBtn(){
+  const id=Number(document.getElementById('test-module')?.value);
+  const mcq=document.getElementById('test-mcq')?.value;
+  const cs=document.getElementById('test-cs')?.value;
+  const notes=document.getElementById('test-notes')?.value;
+  const m=getM(id);
+  const pass=mcq&&cs&&+mcq>=80&&+cs>=80;
+  state.status[id]={...m,mcq:mcq||null,cs:cs||null,notes,status:pass?'complete':m.status==='not_started'?'in_progress':m.status};
+  saveStatus();flash();
+}
+
+loadState();
+render();
+</script>
+</body>
+</html>
